@@ -13,19 +13,14 @@ $vcip = 'xxx.xx.xx.xx'
 $vcadmin = 'administrator@vsphere.local'
 $vcpass = 'xxxxxxxxxxxxxxxx'
 
+#vCenterへ接続
 Connect-VIServer -Server $vcip -Protocol https -User $vcadmin -Password $vcpass -Force
 
-
-
-
-
-
-
-#GetHostList
+#HostListの取得
 $DC = Get-Datacenter | Select-Object Name
 $ListOfVMHosts = Get-Datacenter $DC.Name | Get-VMHost | Sort-Object Name
 
-# ホスト情報の入手
+#ホスト内情報の入手
 $Count = $ListOfVMHosts.Count
 $Counter = 1
 
@@ -78,14 +73,14 @@ Foreach($VMHost in $ListOfVMHosts) {
                 DSName4           = $Hostdatastore.Name[4]
                 DSCapacity4       = $Hostdatastore.CapacityGB[4]
                 DSPath4           = $Hostdatastore.Path[4]
-
             }
 
     $Report.add($Object) | Out-Null    
     } 
     $Counter++
 #$Report
-
+#レポートをCSVにてExport
 $Report | Export-Csv $csvpath -NoTypeInformation -UseCulture
 
+#vCenterから
 $DefaultVIServers | Disconnect-VIServer -Confirm:$false
